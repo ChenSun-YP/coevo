@@ -1,3 +1,11 @@
+on 
+
+```<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate ```
+
+```
+cd /Applications/Python\ 3.9/
+./Install\ Certificates.command
+```
 **This package includes the Python code of the paper 'Neural Network Pruning by Cooperative Coevolution'.** 
 
 ATTN: This package is free for academic usage. You can run it at your own risk. For other purposes, please contact Dr. Chao Qian (qianc@lamda.nju.edu.cn).
