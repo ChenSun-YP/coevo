@@ -10,7 +10,8 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import arch.resnet_cifar10 as cifar_models
-from prefetch_generator import BackgroundGenerator
+from prefetch_generator1.prefetch_generator import BackgroundGenerator
+# from prefetch_generator import BackgroundGenerator
 from torch.utils.data import DataLoader
 import arch.resnet_imagenet as imagenet_models
 import arch.vgg_cifar10 as vggmodels
@@ -23,7 +24,6 @@ import os
 import finetune
 import CCEP
 from thop import profile
-
 
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")
