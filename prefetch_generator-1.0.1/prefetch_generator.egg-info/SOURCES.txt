@@ -1,0 +1,7 @@
+README.md
+setup.py
+prefetch_generator/__init__.py
+prefetch_generator.egg-info/PKG-INFO
+prefetch_generator.egg-info/SOURCES.txt
+prefetch_generator.egg-info/dependency_links.txt
+prefetch_generator.egg-info/top_level.txt
