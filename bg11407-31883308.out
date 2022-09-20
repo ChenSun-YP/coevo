@@ -1,0 +1,122 @@
+created virtual environment CPython3.8.10.final.0-64 in 3334ms
+  creator CPython3Posix(dest=/localscratch/chensun.31883308.0/env, clear=False, global=False)
+  seeder FromAppData(download=False, pip=latest, setuptools=latest, wheel=latest, via=copy, app_data_dir=/home/chensun/.local/share/virtualenv/seed-app-data/v1.0.1)
+  activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
+Ignoring pip: markers 'python_version < "3"' don't match your environment
+Looking in links: /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx512, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx2, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/generic, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx512/torch-1.12.1+computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/generic/torchvision-0.13.1+torch1121.computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/generic/torchtext-0.13.1+torch1121.computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx2/torchaudio-0.12.1+torch1121.computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/typing_extensions-4.3.0+computecanada-py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/generic/numpy-1.23.0+computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx2/Pillow_SIMD-9.0.0.post1+computecanada-cp38-cp38-linux_x86_64.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/requests-2.28.1+computecanada-py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/tqdm-4.64.0+computecanada-py2.py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/charset_normalizer-2.1.1+computecanada-py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/certifi-2022.9.14+computecanada-py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/idna-3.3+computecanada-py3-none-any.whl
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/urllib3-1.26.12+computecanada-py2.py3-none-any.whl
+Installing collected packages: typing-extensions, torch, numpy, pillow-simd, charset-normalizer, certifi, idna, urllib3, requests, torchvision, tqdm, torchtext, torchaudio
+Successfully installed certifi-2022.9.14+computecanada charset-normalizer-2.1.1+computecanada idna-3.3+computecanada numpy-1.23.0+computecanada pillow-simd-9.0.0.post1+computecanada requests-2.28.1+computecanada torch-1.12.1+computecanada torchaudio-0.12.1+torch1121.computecanada torchtext-0.13.1+torch1121.computecanada torchvision-0.13.1+torch1121.computecanada tqdm-4.64.0+computecanada typing-extensions-4.3.0+computecanada urllib3-1.26.12+computecanada
+Ignoring pip: markers 'python_version < "3"' don't match your environment
+Looking in links: /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx512, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/avx2, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/gentoo/generic, /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.VerifiedHTTPSConnection object at 0x2b47c8ba5a00>: Failed to establish a new connection: [Errno 101] Network is unreachable')': /simple/thop/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.VerifiedHTTPSConnection object at 0x2b47c8ba5b80>: Failed to establish a new connection: [Errno 101] Network is unreachable')': /simple/thop/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.VerifiedHTTPSConnection object at 0x2b47c8ba5d00>: Failed to establish a new connection: [Errno 101] Network is unreachable')': /simple/thop/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.VerifiedHTTPSConnection object at 0x2b47c8ba5e50>: Failed to establish a new connection: [Errno 101] Network is unreachable')': /simple/thop/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.VerifiedHTTPSConnection object at 0x2b47c8ba5f70>: Failed to establish a new connection: [Errno 101] Network is unreachable')': /simple/thop/
+Processing /cvmfs/soft.computecanada.ca/custom/python/wheelhouse/generic/thop-0.1.1.post2207130030+computecanada-py3-none-any.whl
+Requirement already satisfied: torch in /localscratch/chensun.31883308.0/env/lib/python3.8/site-packages (from thop) (1.12.1+computecanada)
+Requirement already satisfied: typing-extensions in /localscratch/chensun.31883308.0/env/lib/python3.8/site-packages (from torch->thop) (4.3.0+computecanada)
+Installing collected packages: thop
+Successfully installed thop-0.1.1.post2207130030+computecanada
+running install
+running bdist_egg
+running egg_info
+creating prefetch_generator.egg-info
+writing prefetch_generator.egg-info/PKG-INFO
+writing dependency_links to prefetch_generator.egg-info/dependency_links.txt
+writing top-level names to prefetch_generator.egg-info/top_level.txt
+writing manifest file 'prefetch_generator.egg-info/SOURCES.txt'
+reading manifest file 'prefetch_generator.egg-info/SOURCES.txt'
+writing manifest file 'prefetch_generator.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build
+creating build/lib
+creating build/lib/arch
+copying arch/resnet_imagenet.py -> build/lib/arch
+copying arch/vgg_cifar10.py -> build/lib/arch
+copying arch/__init__.py -> build/lib/arch
+copying arch/resnet_cifar10.py -> build/lib/arch
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/arch
+copying build/lib/arch/resnet_cifar10.py -> build/bdist.linux-x86_64/egg/arch
+copying build/lib/arch/resnet_imagenet.py -> build/bdist.linux-x86_64/egg/arch
+copying build/lib/arch/__init__.py -> build/bdist.linux-x86_64/egg/arch
+copying build/lib/arch/vgg_cifar10.py -> build/bdist.linux-x86_64/egg/arch
+byte-compiling build/bdist.linux-x86_64/egg/arch/resnet_cifar10.py to resnet_cifar10.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/arch/resnet_imagenet.py to resnet_imagenet.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/arch/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/arch/vgg_cifar10.py to vgg_cifar10.cpython-38.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying prefetch_generator.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying prefetch_generator.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying prefetch_generator.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying prefetch_generator.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+creating dist
+creating 'dist/prefetch_generator-1.0.1-py3.8.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing prefetch_generator-1.0.1-py3.8.egg
+Copying prefetch_generator-1.0.1-py3.8.egg to /localscratch/chensun.31883308.0/env/lib/python3.8/site-packages
+Adding prefetch-generator 1.0.1 to easy-install.pth file
+
+Installed /localscratch/chensun.31883308.0/env/lib/python3.8/site-packages/prefetch_generator-1.0.1-py3.8.egg
+Processing dependencies for prefetch-generator==1.0.1
+Finished processing dependencies for prefetch-generator==1.0.1
+Sun Sep 18 17:53:43 2022       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 515.65.01    Driver Version: 515.65.01    CUDA Version: 11.7     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla V100-SXM2...  Off  | 00000000:1E:00.0 Off |                    0 |
+| N/A   37C    P0    39W / 300W |      0MiB / 16384MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+tensor([[1.6442e-07, 1.5351e-41, 1.6442e-07],
+        [1.5351e-41, 8.6551e-07, 1.5351e-41],
+        [8.6485e-07, 1.5351e-41, 8.6551e-07],
+        [1.5351e-41, 8.6551e-07, 1.5351e-41],
+        [8.6551e-07, 1.5351e-41, 8.6552e-07]])
+tensor([[0.5407, 0.4962, 0.8756],
+        [0.3730, 0.9109, 0.3333],
+        [0.9148, 0.8575, 0.9169],
+        [0.7278, 0.0500, 0.4091],
+        [0.7982, 0.3233, 0.0834]])
+tensor([[0.5407, 0.4962, 0.8756],
+        [0.3730, 0.9109, 0.3333],
+        [0.9148, 0.8575, 0.9169],
+        [0.7278, 0.0500, 0.4091],
+        [0.7982, 0.3233, 0.0834]], device='cuda:0')
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from config import *
+  File "/lustre03/project/6049347/chensun/coevo/config.py", line 13, in <module>
+    from prefetch_generator import BackgroundGenerator
+ModuleNotFoundError: No module named 'prefetch_generator'
+Done
