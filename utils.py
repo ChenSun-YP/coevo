@@ -104,6 +104,14 @@ def get_model(args):
             model.load_state_dict(model_dict)
         else:
             model = torch.nn.DataParallel(vgg_imagenet_models.__dict__['vgg16_bn'](pretrained=True))
+    elif args.arch == 'spike_vgg':
+        if args.dataset == 'cifar10':
+            model = vggmodels.__dict__[args.arch](depth=16)
+            model_dict = torch.load(args.dict_path)['state_dict']
+            model.load_state_dict(model_dict)
+        else:
+            model =spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode,
+                                      surrogate_function=surrogate.ATan(), detach_reset=True)
     else:
         raise NotImplementedError('Not supported architecture')
     model.cuda()

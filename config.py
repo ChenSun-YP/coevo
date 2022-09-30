@@ -1,6 +1,8 @@
 import argparse
 import torch
 import time
+from torch.utils.tensorboard import SummaryWriter
+import CCEP_snn
 import random
 import torch.nn as nn
 import torch.nn.parallel
@@ -24,7 +26,13 @@ import os
 import finetune
 import CCEP
 from thop import profile
+from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
 
+
+from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
+
+from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")
                            and name.startswith("resnet")
