@@ -3,12 +3,44 @@ from config import *
 from pruning_utils import *
 from thop import profile
 import copy
-import finetune
+# import finetune
 import random
 import numpy as np
 import logging
 from train import validate
+import torch
+from torch import nn
+import torch.nn.utils.prune as prune
+import torch.nn.functional as F
+import os
 
+import logging
+# from config import *
+# from utils import *
+
+import time
+import argparse
+import sys
+import datetime
+from torchsummary import summary
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.utils.data as data
+from torch.cuda import amp
+from torch.utils.tensorboard import SummaryWriter
+import torchvision
+import numpy as np
+from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
+
+
+from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
+
+
+
+
+# modified CCEP for snn pruniing, do have training
 class CCEP:
     def __init__(self, model, train_loader, valid_loader, test_loader, args):
         self.valid_loader = valid_loader
@@ -219,12 +251,17 @@ class CCEP:
                                                                                                        1 - p_params / i_params) * 100))
         self.model.cuda()
         return (1 - p_flops / i_flops) * 100, (1 - p_params / i_params) * 100
+    def generate_mask(self):
 
+        mask = torch.ones(self.model.weight.shape)
+        return mask
     def run(self, run_epoch):
         self.model.cuda()
         logger = logging.getLogger()
-        fine_tune_method = finetune.fine_tune()
+        # fine_tune_method = finetune.fine_tune()
         FILTER_NUM = []
+        mask = self.generate_mask()
+        print(mask)
         BLOCK_NUM = []
         sol = []
         layers = []
@@ -274,9 +311,9 @@ class CCEP:
                 optimizer = torch.optim.SGD(pruned_model.parameters(), 0.05, momentum=self.args.momentum,
                                             weight_decay=0.00004)
                 lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=60, last_epoch=-1)
-                self.model = fine_tune_method.basic_finetune(pruned_model, self.args.ft_epoch, self.train_loader,
-                                                             self.test_loader, self.criterion, optimizer, self.args,
-                                                             lr_scheduler, log_save=False)
+                # self.model = fine_tune_method.basic_finetune(pruned_model, self.args.ft_epoch, self.train_loader,
+                #                                              self.test_loader, self.criterion, optimizer, self.args,
+                #                                              lr_scheduler, log_save=False)
                 flops, params = self.check_model_profile()
                 self.best_model_list.append(self.model)
                 logger.info("epoch:{0} after fine-tune...".format(i))
@@ -349,8 +386,8 @@ class CCEP:
                                             weight_decay=self.args.weight_decay)
             lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.args.lr_milestone,
                                                                     last_epoch=-1)
-            self.model = fine_tune_method.basic_finetune(cur_model, self.args.ft_epoch, self.train_loader, self.test_loader, self.criterion, optimizer, self.args,
-                                            lr_scheduler)
+            # self.model = fine_tune_method.basic_finetune(cur_model, self.args.ft_epoch, self.train_loader, self.test_loader, self.criterion, optimizer, self.args,
+            #                                 lr_scheduler)
             flops, params = self.check_model_profile()
             self.best_model_list.append(self.model)
             logger.info("epoch:{0} after fine-tune...".format(i))
