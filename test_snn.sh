@@ -13,6 +13,7 @@ source $SLURM_TMPDIR/env/bin/activate
 pip --version
 pip install --no-index torch torchvision==0.9.1 torchtext torchaudio
 pip install thop
+pip install tensorboard
 nvidia-smi                        # you can use 'nvidia-smi' for a test
 # ResNet56 on CIFAR-10
  python3 main_snn.py --dataset cifar10 --arch vgg  \
