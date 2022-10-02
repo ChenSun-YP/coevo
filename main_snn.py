@@ -16,9 +16,8 @@ def main():
     logger = logging.getLogger()
     logger.info('START PRUNING:')
     alg = CCEP_snn.CCEP(model, train_loader, valid_loader, test_loader, args)
-
     alg.run(args.run_epoch)
 
-    
+
 if __name__ == '__main__':
     main()
