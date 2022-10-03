@@ -17,11 +17,13 @@ def main():
 
 
     vgg = model
-    vgg = get_model(args)
+    #    vgg = get_model(args)
 
     x = []
+    i=0
     for layer in vgg.features:
-        print(type(layer))
+        print(type(layer),i)
+        i+=1
         # if isinstance(layer, nn.Conv2d):
         #     print(layer.weight.shape)
         # elif isinstance(layer, nn.MaxPool2d):
