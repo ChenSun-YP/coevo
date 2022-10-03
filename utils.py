@@ -100,6 +100,7 @@ def get_model(args):
     elif args.arch == 'vgg':
         if args.dataset == 'cifar10':
             model = vggmodels.__dict__[args.arch](depth=16)
+
             model_dict = torch.load(args.dict_path)['state_dict']
             model.load_state_dict(model_dict)
         else:

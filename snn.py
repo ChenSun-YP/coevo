@@ -58,9 +58,8 @@ if __name__ =="__main__":
     # summary(model, (1, 28, 28), batch_size=1, device="cpu")
     # net = model
 
-    vgg = spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode, surrogate_function=surrogate.ATan(), detach_reset=True)
+    vgg = spiking_vgg.spiking_vgg16(pretrained=True, spiking_neuron=neuron.IFNode, surrogate_function=surrogate.ATan(), detach_reset=True)
 
-    exit()
     summary(vgg,(3, 224, 224) , batch_size=1, device="cpu")
     total1 =[]
     total =0

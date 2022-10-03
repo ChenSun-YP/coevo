@@ -41,7 +41,7 @@ from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
 
 
 # modified CCEP for snn pruniing, do have training
-class CCEP:
+class CCEP_snn:
     def __init__(self, model, train_loader, valid_loader, test_loader, args):
         self.valid_loader = valid_loader
         self.test_loader = test_loader
@@ -137,6 +137,7 @@ class CCEP:
             return new_indiv
 
     def evoluiton_step(self, filter_num, deleted_stage_index, deleted_block_index=-1, delete_conv_index=-1):
+        # for a block return a solution , which is suppose to be a mask in my xcase with the correct shape
         pop = self.generate_initial_pop(filter_num)
         logger = logging.getLogger()
         logger.info("Stage:{0} | block:{1} -{2} | filter_num:{3}\n".format(deleted_stage_index, deleted_block_index, delete_conv_index, filter_num))
@@ -251,9 +252,9 @@ class CCEP:
                                                                                                        1 - p_params / i_params) * 100))
         self.model.cuda()
         return (1 - p_flops / i_flops) * 100, (1 - p_params / i_params) * 100
-    def generate_mask(self):
+    def generate_mask(self,shape):
 
-        mask = torch.ones(self.model.weight.shape)
+        mask = torch.ones(shape)
         return mask
     def run(self, run_epoch):
         self.model.cuda()
@@ -291,8 +292,15 @@ class CCEP:
                 for i in range(BLOCK_NUM[layer]):
                     FILTER_NUM.append(16 * (2 ** layer))
                     sol.append([])
-        elif self.args.arch in {'vgg'}:
+        elif self.args.arch in {'vgg'}: #vgg 16 ,13 cove layers, last 3 layers are not conv but all connected
             BLOCK_NUM = [1] * 13
+            layers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            FILTER_NUM = [64, 64, 128, 128, 256, 256, 256, 512, 512, 512, 512, 512, 512]
+            sol = []
+            for i in range(13):
+                sol.append([])
+        elif self.args.arch in {'spiking_vgg'}: #vgg 16 ,13 cove layers, last 3 layers are not conv but all connected
+            BLOCK_NUM = [1] * 13#TODO
             layers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
             FILTER_NUM = [64, 64, 128, 128, 256, 256, 256, 512, 512, 512, 512, 512, 512]
             sol = []
@@ -334,21 +342,25 @@ class CCEP:
             cur_model = copy.deepcopy(self.model)
             logger.info(f'Outer Epoch: {i}')
             index = 0
-            for layer in range(len(BLOCK_NUM)):
-                if self.args.arch == 'vgg':
+            for layer in range(len(BLOCK_NUM)): # 13 blocks
+                if self.args.arch == 'vgg': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
                     print('vgg')
-                else:
-                    for block_index in range(BLOCK_NUM[layer]):
-                        if self.args.arch != 'resnet50':
-                            sol[index] = self.evoluiton_step(FILTER_NUM[index],layers[layer], block_index)
-                            index += 1
-                        else:
-                            sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer], block_index, 0)
-                            index += 1
-                            sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer], block_index, 1)
-                            index += 1
+                elif self.args.arch == 'spiking_vgg': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
+                    sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
+                    index += 1
+                    print('vgg')
+                # else:
+                #     for block_index in range(BLOCK_NUM[layer]):
+                #         if self.args.arch != 'resnet50':
+                #             sol[index] = self.evoluiton_step(FILTER_NUM[index],layers[layer], block_index)
+                #             index += 1
+                #         else:
+                #             sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer], block_index, 0)
+                #             index += 1
+                #             sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer], block_index, 1)
+                #             index += 1
 
             index = 0
             for layer in range(len(BLOCK_NUM)):
@@ -356,19 +368,19 @@ class CCEP:
                     self.pruning_func(cur_model, layers[layer], sol[index])
                     FILTER_NUM[index] = len(sol[index])
                     index += 1
-                else:
-                    for block_index in range(BLOCK_NUM[layer]):
-                        if self.args.arch != 'resnet50':
-                            self.pruning_func(cur_model, layers[layer], block_index, sol[index])
-                            FILTER_NUM[index] = len(sol[index])
-                            index += 1
-                        else:
-                            self.pruning_func(cur_model, layers[layer], block_index, 0, sol[index])
-                            FILTER_NUM[index] = len(sol[index])
-                            index += 1
-                            self.pruning_func(cur_model, layers[layer], block_index, 1, sol[index])
-                            FILTER_NUM[index] = len(sol[index])
-                            index += 1
+                # else:
+                #     for block_index in range(BLOCK_NUM[layer]):
+                #         if self.args.arch != 'resnet50':
+                #             self.pruning_func(cur_model, layers[layer], block_index, sol[index])
+                #             FILTER_NUM[index] = len(sol[index])
+                #             index += 1
+                #         else:
+                #             self.pruning_func(cur_model, layers[layer], block_index, 0, sol[index])
+                #             FILTER_NUM[index] = len(sol[index])
+                #             index += 1
+                #             self.pruning_func(cur_model, layers[layer], block_index, 1, sol[index])
+                #             FILTER_NUM[index] = len(sol[index])
+                #             index += 1
 
             logger.info(f'FILTER_NUM {FILTER_NUM}')
             logger.info("epoch:{0} before fine-tune...".format(i))
@@ -381,9 +393,9 @@ class CCEP:
             if self.args.dataset == 'cifar10':
                 optimizer = torch.optim.SGD(cur_model.parameters(), 0.1, momentum=self.args.momentum,
                                         weight_decay=self.args.weight_decay)
-            else:
-                optimizer = torch.optim.SGD(cur_model.parameters(), 0.01, momentum=self.args.momentum,
-                                            weight_decay=self.args.weight_decay)
+            # else:
+            #     optimizer = torch.optim.SGD(cur_model.parameters(), 0.01, momentum=self.args.momentum,
+            #                                 weight_decay=self.args.weight_decay)
             lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.args.lr_milestone,
                                                                     last_epoch=-1)
             # self.model = fine_tune_method.basic_finetune(cur_model, self.args.ft_epoch, self.train_loader, self.test_loader, self.criterion, optimizer, self.args,

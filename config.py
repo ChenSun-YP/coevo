@@ -27,7 +27,7 @@ import finetune
 import CCEP
 from thop import profile
 from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
-
+from CCEP_snn import CCEP_snn
 
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
