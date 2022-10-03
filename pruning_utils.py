@@ -6,6 +6,10 @@ import torch
 import spikingjelly
 import copy
 from torchvision import models
+from spikingjelly.spikingjelly.activation_based.layer import Conv2d as Conv2dsnn
+from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d as BatchNorm2dsnn
+from spikingjelly.spikingjelly.activation_based.layer import Linear as Linearsnn
+
 
 
 def replace_block(stage_list, i, index, new_block):
@@ -343,7 +347,7 @@ def prune_VGG_group(model, deleted_layer_index, reserved_filter_group, bias=Fals
         layer_index = 0
         old_linear_layer = None
         for _, module in model.classifier._modules.items():
-            if isinstance(module, torch.nn.Linear):
+            if isinstance(module,Linearsnn):
                 old_linear_layer = module
                 break
             layer_index = layer_index + 1
@@ -355,7 +359,7 @@ def prune_VGG_group(model, deleted_layer_index, reserved_filter_group, bias=Fals
         # print(params_per_input_channel)
         # print(old_conv_filter_num, len(reserved_filter_group))
         new_linear_layer = \
-            torch.nn.Linear(old_linear_layer.in_features - params_per_input_channel * (
+            Linearsnn(old_linear_layer.in_features - params_per_input_channel * (
                         old_conv_filter_num - len(reserved_filter_group)),
                             old_linear_layer.out_features)
 
@@ -392,7 +396,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
             return layers[indexes.index(i)]
         return model[i]
 
-    conv_16_index = {0: 0, 1: 2, 2: 5, 3: 7, 4: 10, 5: 12, 6: 14, 7: 17, 8: 19, 9: 21, 10: 24, 11: 26, 12:28 }
+    conv_16_index = {0: 0, 1: 3, 2: 7, 3: 10, 4: 14, 5:17 , 6: 20, 7:24 , 8: 27, 9: 30, 10: 34, 11: 37, 12:40 }
     if deleted_layer_index != 12:
         # current conv
         _, old_conv1 = list(model.features._modules.items())[conv_16_index[deleted_layer_index]]
@@ -403,7 +407,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
         #                             padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
         #                             bias=(old_conv1.bias is not None))
 
-        new_conv1 = spikingjelly.activation_based.layer.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+        new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
                                     bias=(old_conv1.bias is not None), step_mode="s")
@@ -427,7 +431,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
                           old_bn1.bias.data.cpu().numpy(), \
                           old_bn1.running_mean.data.cpu().numpy(), \
                           old_bn1.running_var.data.cpu().numpy()]
-        new_bn1 = torch.nn.BatchNorm2d(len(reserved_filter_group))
+        new_bn1 = BatchNorm2dsnn(len(reserved_filter_group))
         new_bn1_weight = [new_bn1.weight.data.cpu().numpy(), \
                           new_bn1.bias.data.cpu().numpy(), \
                           new_bn1.running_mean.data.cpu().numpy(), \
@@ -441,7 +445,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
 
         # next_conv
         _, old_conv2 = list(model.features._modules.items())[conv_16_index[deleted_layer_index + 1]]
-        new_conv2 = torch.nn.Conv2d(in_channels=len(reserved_filter_group), out_channels=old_conv2.out_channels,
+        new_conv2 = Conv2dsnn(in_channels=len(reserved_filter_group), out_channels=old_conv2.out_channels,
                                     kernel_size=old_conv2.kernel_size, stride=old_conv2.stride,
                                     padding=old_conv2.padding, dilation=old_conv2.dilation, groups=old_conv2.groups,
                                     bias=(old_conv2.bias is not None))
@@ -470,7 +474,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
     else:
         # last conv layer
         _, old_conv1 = list(model.features._modules.items())[conv_16_index[deleted_layer_index]]
-        new_conv1 = torch.nn.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+        new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
                                     bias=(old_conv1.bias is not None))
@@ -490,7 +494,7 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
                           old_bn1.bias.data.cpu().numpy(), \
                           old_bn1.running_mean.data.cpu().numpy(), \
                           old_bn1.running_var.data.cpu().numpy()]
-        new_bn1 = torch.nn.BatchNorm2d(len(reserved_filter_group))
+        new_bn1 = BatchNorm2dsnn(len(reserved_filter_group))
         new_bn1_weight = [new_bn1.weight.data.cpu().numpy(), \
                           new_bn1.bias.data.cpu().numpy(), \
                           new_bn1.running_mean.data.cpu().numpy(), \
@@ -516,19 +520,19 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
         layer_index = 0
         old_linear_layer = None
         for _, module in model.classifier._modules.items():
-            if isinstance(module, torch.nn.Linear):
+            if isinstance(module, Linearsnn):
                 old_linear_layer = module
                 break
             layer_index = layer_index + 1
 
         if old_linear_layer is None:
-            raise BaseException("No linear laye found in classifier")
+            raise BaseException("No linear layer found in classifier")
 
         params_per_input_channel = old_linear_layer.in_features // old_conv1.out_channels
         # print(params_per_input_channel)
         # print(old_conv_filter_num, len(reserved_filter_group))
         new_linear_layer = \
-            torch.nn.Linear(old_linear_layer.in_features - params_per_input_channel * (
+            Linearsnn(old_linear_layer.in_features - params_per_input_channel * (
                         old_conv_filter_num - len(reserved_filter_group)),
                             old_linear_layer.out_features)
 

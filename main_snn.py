@@ -17,7 +17,7 @@ def main():
 
 
     vgg = model
-    vgg = get_model(args)
+    # vgg = get_model(args)
 
     x = []
     for layer in vgg.features:
