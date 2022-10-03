@@ -17,6 +17,8 @@ pip3 install thop
 pip3 install --no-index torchsummary
 pip3 install --no-index  tensorboard
 git clone https://github.com/fangwei123456/spikingjelly.git
+cd spikingjelly
+python setup.py install
 
 nvidia-smi                        # you can use 'nvidia-smi' for a test
 # ResNet56 on CIFAR-10
