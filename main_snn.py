@@ -20,10 +20,10 @@ def main():
     x = []
     for layer in vgg.features:
         print(type(layer))
-        if isinstance(layer, nn.Conv2d):
-            print(layer.weight.shape)
-        elif isinstance(layer, nn.MaxPool2d):
-            print(layer)
+        # if isinstance(layer, nn.Conv2d):
+        #     print(layer.weight.shape)
+        # elif isinstance(layer, nn.MaxPool2d):
+        #     print(layer)
 
 
 

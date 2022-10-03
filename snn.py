@@ -21,13 +21,13 @@ from torch.cuda import amp
 from torch.utils.tensorboard import SummaryWriter
 import torchvision
 import numpy as np
-from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
+from spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
 
 
-from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
-from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
+from spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.activation_based.model import spiking_vgg
 
-from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
+from spikingjelly.activation_based.model import spiking_resnet
 writer = SummaryWriter('runs/snn_experiment_1')
 
 
