@@ -3,6 +3,7 @@ import torch.nn.utils.prune as prune
 import arch.resnet_cifar10 as resnet
 import arch.resnet_imagenet as resnet_imagenet
 import torch
+import spikingjelly
 import copy
 from torchvision import models
 
@@ -397,15 +398,15 @@ def prune_spike_VGG_group(model, deleted_layer_index, reserved_filter_group, bia
         _, old_conv1 = list(model.features._modules.items())[conv_16_index[deleted_layer_index]]
 
 
-        new_conv1 = torch.nn.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
-                                    kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
-                                    padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
-                                    bias=(old_conv1.bias is not None))
-        #
         # new_conv1 = torch.nn.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
         #                             kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
         #                             padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
-        #                             bias=(old_conv1.bias is not None), step_mode="s")
+        #                             bias=(old_conv1.bias is not None))
+
+        new_conv1 = spikingjelly.activation_based.layer.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+                                    kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
+                                    padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
+                                    bias=(old_conv1.bias is not None), step_mode="s")
 
         old_conv1_weights = old_conv1.weight.data.cpu().numpy()
 
