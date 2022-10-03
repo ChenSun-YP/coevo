@@ -33,6 +33,7 @@ from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functi
 from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
 from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
 
+
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")

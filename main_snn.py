@@ -17,7 +17,11 @@ def main():
 
 
     vgg = model
+<<<<<<< HEAD
     #    vgg = get_model(args)
+=======
+    # vgg = get_model(args)
+>>>>>>> b6c5ae54464d627319e92403776a6d9024b0b87e
 
     x = []
     i=0
