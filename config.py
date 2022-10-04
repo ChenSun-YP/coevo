@@ -27,7 +27,6 @@ import finetune
 import CCEP
 from thop import profile
 from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
-from CCEP_snn import CCEP_snn
 
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
@@ -71,7 +70,7 @@ parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float, metavar=
 parser.add_argument('--data', metavar='DIR',
                     help='path to dataset', default='~/data/ImageNet', type=str)
 parser.add_argument('--dataset',
-                    help='choose datasets ', default='ImageNet', type=str)
+                    help='choose datasets ', default='cifar10', type=str)
 parser.add_argument('--save_path',
                     help='path to log', default='./save', type=str)
 parser.add_argument('--random_seed', '-rd', default=random.randint(0, 2022), type=int,

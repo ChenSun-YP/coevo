@@ -1,7 +1,10 @@
 import logging
 
 from config import *
+
 from utils import *
+from CCEP_snn import CCEP_snn as CCEPsnn
+
 
 
 def main():
@@ -13,14 +16,14 @@ def main():
     train_loader, valid_loader, test_loader = get_data(args)
     # writer_test = SummaryWriter(log_dir, flush_secs=600, purge_step=net.epochs) TODO
     # writer_train = SummaryWriter(log_dir, flush_secs=600, purge_step=net.train_times)
-
-
+    #
+    # model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
+    #                                  surrogate_function=surrogate.ATan(), detach_reset=True)
 
 
     #    vgg = get_model(args)
 
     model = get_model(args)
-
 
 
 
