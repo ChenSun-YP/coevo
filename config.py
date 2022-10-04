@@ -56,7 +56,7 @@ parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet56',
                     help='model architecture: ' +
                          ' | '.join(model_names) +
                          ' (default: resnet18)')
-parser.add_argument('--dict_path', dest='dict_path', default='./save_model/', type=str)
+parser.add_argument('--dict_path', dest='dict_path', default='./models/vgg16.th', type=str)
 parser.add_argument('-b', '--batch-size', default=256, type=int,
                     metavar='N', help='mini-batch size (default: 128)')
 parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',

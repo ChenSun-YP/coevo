@@ -3,7 +3,7 @@ import logging
 from config import *
 
 from utils import *
-from CCEP_snn import CCEP_snn as CCEPsnn
+from CCEP_snn import CCEP_snn as CCEPSNN
 
 
 
@@ -32,7 +32,7 @@ def main():
 
     logger = logging.getLogger()
     logger.info('START PRUNING:')
-    alg = CCEP_snn(model, train_loader, valid_loader, test_loader, args)
+    alg = CCEPSNN(model, train_loader, valid_loader, test_loader, args)
 
     alg.run(args.run_epoch)
 

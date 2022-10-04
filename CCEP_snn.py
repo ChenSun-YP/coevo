@@ -41,7 +41,7 @@ from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
 
 
 # modified CCEP for snn pruniing, do have training
-class CCEP_snn:
+class CCEPSNN:
     def __init__(self, model, train_loader, valid_loader, test_loader, args):
         self.valid_loader = valid_loader
         self.test_loader = test_loader
