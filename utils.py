@@ -1,5 +1,9 @@
 from config import *
 import sys
+from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
+
+from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
+from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")
@@ -107,9 +111,12 @@ def get_model(args):
             model = torch.nn.DataParallel(vgg_imagenet_models.__dict__['vgg16_bn'](pretrained=True))
     elif args.arch == 'spike_vgg':
         if args.dataset == 'cifar10':
-            model = vggmodels.__dict__[args.arch](depth=16)
-            model_dict = torch.load(args.dict_path)['state_dict']
-            model.load_state_dict(model_dict)
+            # model = vggmodels.__dict__[args.arch](depth=16)
+            model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
+                                             surrogate_function=surrogate.ATan(), detach_reset=True)
+            #
+            # model_dict = torch.load(args.dict_path)['state_dict']
+            # model.load_state_dict(model_dict)
         else:
             model =spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode,
                                       surrogate_function=surrogate.ATan(), detach_reset=True)

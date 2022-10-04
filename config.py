@@ -30,9 +30,9 @@ from spikingjelly.spikingjelly.activation_based import neuron, encoding, functio
 from CCEP_snn import CCEP_snn
 
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
-from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
 from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
 
+from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
 
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 cifar_model_names = sorted(name for name in cifar_models.__dict__
@@ -46,7 +46,7 @@ imagenet_model_names = sorted(name for name in imagenet_models.__dict__
                               and callable(imagenet_models.__dict__[name]))
 vgg_models_name = sorted(name for name in vggmodels.__dict__
                               if name.islower() and not name.startswith("__")
-                              and callable(vggmodels.__dict__[name]))
+                              and callable(vggmodels.__dict__[name]))+["spike_vgg"]
 
 model_names = cifar_model_names + imagenet_model_names + vgg_models_name
 
