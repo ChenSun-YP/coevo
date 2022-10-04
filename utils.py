@@ -114,6 +114,7 @@ def get_model(args):
             # model = vggmodels.__dict__[args.arch](depth=16)
             model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
                                              surrogate_function=surrogate.ATan(), detach_reset=True)
+            print(type(model))
             #
             # model_dict = torch.load(args.dict_path)['state_dict']
             # model.load_state_dict(model_dict)
