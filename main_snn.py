@@ -3,7 +3,7 @@ import logging
 from config import *
 
 from utils import *
-from CCEP_snn import CCEP_snn as CCEPSNN
+from CCEP_snn import CCEPSNN
 
 
 
