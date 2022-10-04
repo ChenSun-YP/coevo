@@ -70,6 +70,8 @@ class CCEPSNN:
                 self.pruning_func = prune_Resnet_imagenet_group
             elif self.args.arch == 'resnet34':
                 self.pruning_func = prune_Resnet34_group
+            elif self.args.arch == 'spike_vgg':
+                self.pruning_func = prune_spike_VGG_group
             else:
                 raise NotImplementedError('Not implemented model')
 
