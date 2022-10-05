@@ -36,7 +36,7 @@ from spikingjelly.spikingjelly.activation_based import neuron, encoding, functio
 
 from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
 from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
-
+from spikingjelly.spikingjelly.activation_based.model.train_classify import Trainer
 
 
 
@@ -226,15 +226,20 @@ class CCEPSNN:
             model_input = torch.randn(1, 3, 32, 32)
         else:
             model_input = torch.randn(1, 3, 224, 224)
-        if self.args.arch != 'vgg':
-            i_flops, i_params = profile(self.ori_model.module, inputs=(model_input.cuda(),), verbose=False)
+        if self.args.arch != 'vgg' or 'spike_vgg':
+            i_flops, i_params = profile(self.ori_model, inputs=(model_input.cuda(),), verbose=False)
             logger.info("initial model: FLOPs: {0}, params: {1}".format(i_flops, i_params))
-            p_flops, p_params = profile(self.model.module.cuda(), inputs=(model_input.cuda(),), verbose=False)
+            p_flops, p_params = profile(self.model.cuda(), inputs=(model_input.cuda(),), verbose=False)
+            p_flops+=1
+            p_params+=1#TODO
+            i_flops +=1
+            i_params +=1
             logger.info("pruned model: FLOPs: {0}({1:.2f}%), params: {2}({3:.2f}%)".format(p_flops, (1 - p_flops / i_flops) * 100,
                                                                                      p_params,
                                                                                      (1 - p_params / i_params) * 100))
         else:
             if self.args.dataset == 'cifar10':
+                x = self.ori_model
                 i_flops, i_params = profile(self.ori_model, inputs=(model_input.cuda(),), verbose=False)
                 logger.info("initial model: FLOPs: {0}, params: {1}".format(i_flops, i_params))
                 p_flops, p_params = profile(self.model.cuda(), inputs=(model_input.cuda(),), verbose=False)
@@ -263,8 +268,8 @@ class CCEPSNN:
         logger = logging.getLogger()
         # fine_tune_method = finetune.fine_tune()
         FILTER_NUM = []
-        mask = self.generate_mask()
-        print(mask)
+        # mask = self.generate_mask()
+        # print(mask)
         BLOCK_NUM = []
         sol = []
         layers = []
@@ -315,7 +320,7 @@ class CCEPSNN:
             logger.info(f'FILTER_NUM: {FILTER_NUM}')
             logger.info(f'Model now: {pruned_model}')
             self.model = copy.deepcopy(pruned_model)
-            self.check_model_profile()
+            # self.check_model_profile() TODO
             # print(pruned_model)
             if self.args.finetune:
                 optimizer = torch.optim.SGD(pruned_model.parameters(), 0.05, momentum=self.args.momentum,

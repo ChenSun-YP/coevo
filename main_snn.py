@@ -6,6 +6,7 @@ from utils import *
 from CCEP_snn import CCEPSNN
 
 
+from spikingjelly.spikingjelly.activation_based.model.train_classify import Trainer
 
 def main():
     args = parser.parse_args()
@@ -22,7 +23,8 @@ def main():
 
 
     #    vgg = get_model(args)
-
+    x = Trainer()
+    dataset, dataset_test, train_sampler, test_sampler = x.load_ImageNet(args=args)
     model = get_model(args)
 
 

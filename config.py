@@ -1,3 +1,5 @@
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 import argparse
 import torch
 import time
@@ -51,15 +53,15 @@ model_names = cifar_model_names + imagenet_model_names + vgg_models_name
 
 parser = argparse.ArgumentParser(description='Pruning Neural Network by CCEA')
 
-parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet56',
+parser.add_argument('--arch', '-a', metavar='ARCH', default='spike_vgg',
                     choices=model_names,
                     help='model architecture: ' +
                          ' | '.join(model_names) +
                          ' (default: resnet18)')
 parser.add_argument('--dict_path', dest='dict_path', default='./models/vgg16.th', type=str)
-parser.add_argument('-b', '--batch-size', default=256, type=int,
-                    metavar='N', help='mini-batch size (default: 128)')
-parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
+parser.add_argument('-b', '--batch-size', default=2, type=int,
+                    metavar='N', help='mini-batch size (default: 128)')#TODO 256 16
+parser.add_argument('-j', '--workers', default=1, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('-p', '--print-freq', default=50, type=int,
                     metavar='N', help='print frequency (default: 50)')
@@ -69,6 +71,9 @@ parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float, metavar=
                     help='weight decay (default: 1e-4)')
 parser.add_argument('--data', metavar='DIR',
                     help='path to dataset', default='~/data/ImageNet', type=str)
+parser.add_argument('--data_path', metavar='DIR',
+                    help='path to dataset', default='/datasets/ImageNet0_03125', type=str)
+
 parser.add_argument('--dataset',
                     help='choose datasets ', default='cifar10', type=str)
 parser.add_argument('--save_path',

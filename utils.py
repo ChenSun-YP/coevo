@@ -98,6 +98,19 @@ def get_data(args):
 def get_model(args):
     if args.arch in imagenet_model_names:
         model = torch.nn.DataParallel(imagenet_models.__dict__[args.arch](pretrained=True))
+    elif args.arch == 'spike_vgg':
+        if args.dataset == 'cifar10':
+            # model = vggmodels.__dict__[args.arch](depth=16)
+
+            model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
+                                             surrogate_function=surrogate.ATan(), detach_reset=True,data_path =args.data_path)
+            print(type(model))
+            #
+            # model_dict = torch.load(args.dict_path)['state_dict']
+            # model.load_state_dict(model_dict)
+        else:
+            model =spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode,
+                                      surrogate_function=surrogate.ATan(), detach_reset=True)
     elif args.arch in cifar_model_names:
         model = torch.nn.DataParallel(cifar_models.__dict__[args.arch]())
         model.load_state_dict(torch.load(args.dict_path)['state_dict'])
@@ -109,18 +122,7 @@ def get_model(args):
             model.load_state_dict(model_dict)
         else:
             model = torch.nn.DataParallel(vgg_imagenet_models.__dict__['vgg16_bn'](pretrained=True))
-    elif args.arch == 'spike_vgg':
-        if args.dataset == 'cifar10':
-            # model = vggmodels.__dict__[args.arch](depth=16)
-            model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
-                                             surrogate_function=surrogate.ATan(), detach_reset=True)
-            print(type(model))
-            #
-            # model_dict = torch.load(args.dict_path)['state_dict']
-            # model.load_state_dict(model_dict)
-        else:
-            model =spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode,
-                                      surrogate_function=surrogate.ATan(), detach_reset=True)
+
     else:
         raise NotImplementedError('Not supported architecture')
     model.cuda()

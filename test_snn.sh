@@ -23,6 +23,7 @@ python main_snn.py --dataset cifar10 --arch spike_vgg  \
                   --ft_epoch 100 --lr_milestone 50 \
                   --dict_path ./models/vgg16.th  --pop_init_rate 0.95  \
                   --prune_limitation 0.90 --batch-size 128 --valid_ratio 0.8  \
+                 --run_epoch 2
 
 # python  main_snn.py --dataset ImageNet --arch vgg  \
 #                  --ft_epoch 100 --lr_milestone 50   --data ./data/ImageNet  \
@@ -39,4 +40,4 @@ python main_snn.py --dataset cifar10 --arch spike_vgg  \
 wait
 echo "Done"
 
-
+python main_snn.py --dataset cifar10 --arch spike_vgg  --ft_epoch 100 --lr_milestone 50   --dict_path ./models/vgg16.th  --pop_init_rate 0.95      --prune_limitation 0.90 --batch-size 128 --valid_ratio 0.8     --run_epoch 2
