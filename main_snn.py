@@ -23,8 +23,8 @@ def main():
 
 
     #    vgg = get_model(args)
-    x = Trainer()
-    dataset, dataset_test, train_sampler, test_sampler = x.load_ImageNet(args=args)
+    # x = Trainer()
+    # dataset, dataset_test, train_sampler, test_sampler = x.load_ImageNet(args=args)
     model = get_model(args)
 
 

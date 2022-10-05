@@ -41,3 +41,5 @@ wait
 echo "Done"
 
 python main_snn.py --dataset cifar10 --arch spike_vgg  --ft_epoch 100 --lr_milestone 50   --dict_path ./models/vgg16.th  --pop_init_rate 0.95      --prune_limitation 0.90 --batch-size 128 --valid_ratio 0.8     --run_epoch 2
+python main_snn.py --dataset ImageNet --arch spike_vgg  --ft_epoch 100 --lr_milestone 50   --dict_path ./models/vgg16.th  --pop_init_rate 0.95      --prune_limitation 0.90 --batch-size 128 --valid_ratio 0.8  --dict_path ImageNet   --run_epoch 2
+--val_resize_size 232 --val_crop_size 232 --train_crop_size 176

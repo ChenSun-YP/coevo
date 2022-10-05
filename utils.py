@@ -25,6 +25,8 @@ def get_data(args):
     trainloader, validloader, testloader = None, None, None
     if args.dataset == 'ImageNet':
         traindir = os.path.join(args.data, 'train')
+
+        print(traindir,'?????')
         valdir = os.path.join(args.data, 'val')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])

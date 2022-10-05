@@ -110,5 +110,14 @@ parser.add_argument('--valid_ratio', default=0.99, type=float,
 parser.add_argument('--use_crossover',action='store_true',
                     help='use crossover in evolution')
 
-parser.add_argument('--crossover_rate', default=0.3, type=float,
-                    help='crossover rate for CCEA')
+# parser.add_argument('--crossover_rate', default=0.3, type=float,
+#                     help='crossover rate for CCEA')
+# parser.add_argument('--val_crop_size', default=224, type=float,
+#                     help='crossover rate for CCEA')
+# parser.add_argument('--train_crop_size', default=176, type=float,
+#                     help='crossover rate for CCEA')
+# parser.add_argument('--val_resize_size', default=232, type=float,
+#                     help='crossover rate for CCEA')
+#
+# parser.add_argument('--interpolation', default="bilinear", type=str,
+#                     help='crossover rate for CCEA')
