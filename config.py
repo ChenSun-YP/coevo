@@ -59,9 +59,9 @@ parser.add_argument('--arch', '-a', metavar='ARCH', default='spike_vgg',
                          ' | '.join(model_names) +
                          ' (default: resnet18)')
 parser.add_argument('--dict_path', dest='dict_path', default='./models/vgg16.th', type=str)
-parser.add_argument('-b', '--batch-size', default=2, type=int,
+parser.add_argument('-b', '--batch-size', default=256, type=int,
                     metavar='N', help='mini-batch size (default: 128)')#TODO 256 16
-parser.add_argument('-j', '--workers', default=1, type=int, metavar='N',
+parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('-p', '--print-freq', default=50, type=int,
                     metavar='N', help='print frequency (default: 50)')
