@@ -1,7 +1,7 @@
 on 
 
 ```<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate ```
-
+python main_snn_2.py -T 4 -device cuda:0 -b 128 -epochs 64 -data-dir /datasets/FashionMNIST/ -amp -cupy -opt sgd -lr 0.1 -j 8 -b 20
 ```
 cd /Applications/Python\ 3.9/
 ./Install\ Certificates.command
