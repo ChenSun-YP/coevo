@@ -31,12 +31,12 @@ from torch.cuda import amp
 from torch.utils.tensorboard import SummaryWriter
 import torchvision
 import numpy as np
-from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
+from spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
 
 
-from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
-from spikingjelly.spikingjelly.activation_based.model import spiking_resnet
-from spikingjelly.spikingjelly.activation_based.model.train_classify import Trainer
+from spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.activation_based.model import spiking_resnet
+from spikingjelly.activation_based.model.train_classify import Trainer
 
 
 
@@ -72,6 +72,8 @@ class CCEPSNN:
                 self.pruning_func = prune_Resnet34_group
             elif self.args.arch == 'spike_vgg':
                 self.pruning_func = prune_spike_VGG_group
+            elif self.args.arch == 'csnn':
+                self.pruning_func = prune_csnn
             else:
                 raise NotImplementedError('Not implemented model')
 
@@ -149,6 +151,9 @@ class CCEPSNN:
         logger.info(f"Initial population")
         for i in range(self.pop_size):
             test_model = copy.deepcopy(self.model)
+            # test_model.functional.set_step_mode(step_mode='m')
+            functional.set_step_mode(test_model, step_mode='m')
+
             if delete_conv_index != -1:
                 test_model = self.pruning_func(test_model, deleted_stage_index, deleted_block_index, delete_conv_index, pop[i])
             elif deleted_block_index != -1:
@@ -224,6 +229,8 @@ class CCEPSNN:
         logger = logging.getLogger()
         if self.args.dataset == 'cifar10':
             model_input = torch.randn(1, 3, 32, 32)
+        elif self.args.dataset == 'fashionmnist':
+            model_input = torch.randn(1, 28,28)
         else:
             model_input = torch.randn(1, 3, 224, 224)
         if self.args.arch != 'vgg' or 'spike_vgg':
@@ -237,6 +244,19 @@ class CCEPSNN:
             logger.info("pruned model: FLOPs: {0}({1:.2f}%), params: {2}({3:.2f}%)".format(p_flops, (1 - p_flops / i_flops) * 100,
                                                                                      p_params,
                                                                                      (1 - p_params / i_params) * 100))
+        elif self.args.arch == 'csnn':
+
+            # i_flops, i_params = profile(self.ori_model, inputs=(model_input.cuda(),), verbose=False)
+            # logger.info("initial model: FLOPs: {0}, params: {1}".format(i_flops, i_params))
+            # p_flops, p_params = profile(self.model.cuda(), inputs=(model_input.cuda(),), verbose=False)
+            # p_flops+=1
+            # p_params+=1#TODO
+            # i_flops +=1
+            # i_params +=1
+            # logger.info("pruned model: FLOPs: {0}({1:.2f}%), params: {2}({3:.2f}%)".format(p_flops, (1 - p_flops / i_flops) * 100,
+            #                                                                          p_params,
+            #                                                                          (1 - p_params / i_params) * 100))
+            pass
         else:
             if self.args.dataset == 'cifar10':
                 x = self.ori_model
@@ -273,6 +293,19 @@ class CCEPSNN:
         BLOCK_NUM = []
         sol = []
         layers = []
+
+        ##`
+        # logger.info("Test set:")
+        # acc = validate(self.test_loader, self.model, self.criterion, self.args)
+        # self.acc.append(acc)
+        # logger.info("acc set:",acc)
+        #
+        # logger.info("Valid set:")
+        # validate(self.valid_loader, self.model, self.criterion, self.args)
+        # save_path = f'{self.args.save_path}/{self.args.arch}_{self.args.dataset}_af.pth'
+        # torch.save(self.model, save_path)
+        # exit()
+
         #init solution
         if self.args.arch in {'resnet34', 'resnet50'}:
             layers = ['layer1', 'layer2', 'layer3', 'layer4']
@@ -313,6 +346,13 @@ class CCEPSNN:
             sol = []
             for i in range(13):
                 sol.append([])
+        elif self.args.arch in {'csnn'}: #simple 2 lay csnn
+            BLOCK_NUM = [1] * 2#TODO
+            layers = [0, 1]
+            FILTER_NUM = [128,128]
+            sol = []
+            for i in range(2):
+                sol.append([])
         #resume
         if self.args.resume:
             FILTER_NUM = self.args.filter_num
@@ -342,7 +382,7 @@ class CCEPSNN:
                 save_path = f'{self.args.save_path}/{self.args.arch}_{self.args.dataset}_af.pth'
                 torch.save(self.model, save_path)
             self.model = copy.deepcopy(pruned_model)
-        self.check_model_profile()
+        # self.check_model_profile()
         logger.info("Test set:")
         validate(self.test_loader, self.model, self.criterion, self.args)
         for i in range(run_epoch):
@@ -350,6 +390,7 @@ class CCEPSNN:
             logger.info(f'Outer Epoch: {i}')
             index = 0
             for layer in range(len(BLOCK_NUM)): # 13 blocks
+                print(layer)
                 if self.args.arch == 'vgg': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
@@ -358,6 +399,9 @@ class CCEPSNN:
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
                     print('vgg')
+                elif self.args.arch == 'csnn': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
+                    sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
+                    index += 1
                 # else:
                 #     for block_index in range(BLOCK_NUM[layer]):
                 #         if self.args.arch != 'resnet50':
@@ -372,6 +416,10 @@ class CCEPSNN:
             index = 0
             for layer in range(len(BLOCK_NUM)):
                 if self.args.arch == 'vgg':
+                    self.pruning_func(cur_model, layers[layer], sol[index])
+                    FILTER_NUM[index] = len(sol[index])
+                    index += 1
+                elif self.args.arch == 'csnn':
                     self.pruning_func(cur_model, layers[layer], sol[index])
                     FILTER_NUM[index] = len(sol[index])
                     index += 1

@@ -12,8 +12,8 @@ def main():
     args = parser.parse_args()
     set_logger(args)
 
-     # model = spiking_vgg.spiking_vgg16_bn(pretrained=True, spiking_neuron=neuron.IFNode,norm_layer=BatchNorm2d,
-    #                                   surrogate_function=surrogate.ATan(), detach_reset=True)
+    model = spiking_vgg.spiking_vgg16_bn(pretrained=True, spiking_neuron=neuron.IFNode,norm_layer=BatchNorm2d,
+                                      surrogate_function=surrogate.ATan(), detach_reset=True)
     train_loader, valid_loader, test_loader = get_data(args)
     # writer_test = SummaryWriter(log_dir, flush_secs=600, purge_step=net.epochs) TODO
     # writer_train = SummaryWriter(log_dir, flush_secs=600, purge_step=net.train_times)

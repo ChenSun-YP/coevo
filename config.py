@@ -28,14 +28,14 @@ import os
 import finetune
 import CCEP
 from thop import profile
-from spikingjelly.spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
+from spikingjelly.activation_based import neuron, encoding, functional, surrogate, layer
 
-from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
-from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
+from spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.activation_based.layer import BatchNorm2d
 
-from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
+from spikingjelly.activation_based.model import spiking_vgg
 
-from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.activation_based import surrogate, neuron, functional
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")
                            and name.startswith("resnet")
@@ -53,16 +53,16 @@ model_names = cifar_model_names + imagenet_model_names + vgg_models_name
 
 parser = argparse.ArgumentParser(description='Pruning Neural Network by CCEA')
 
-parser.add_argument('--arch', '-a', metavar='ARCH', default='spike_vgg',
+parser.add_argument('--arch', '-a', metavar='ARCH', default='csnn',
                     choices=model_names,
                     help='model architecture: ' +
                          ' | '.join(model_names) +
                          ' (default: resnet18)')
 parser.add_argument('--dict_path', dest='dict_path', default='./models/vgg16.th', type=str)
-parser.add_argument('-b', '--batch-size', default=256, type=int,
-                    metavar='N', help='mini-batch size (default: 128)')#TODO 256 16
-parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
-                    help='number of data loading workers (default: 4)')
+# parser.add_argument('-b', '--batch-size', default=4, type=int,
+#                     metavar='N', help='mini-batch size (default: 128)')#TODO 256 16
+# parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
+#                     help='number of data loading workers (default: 4)')
 parser.add_argument('-p', '--print-freq', default=50, type=int,
                     metavar='N', help='print frequency (default: 50)')
 parser.add_argument('--lr', '--learning-rate', default=0.01, type=float, metavar='LR', help='initial learning rate')
@@ -73,9 +73,10 @@ parser.add_argument('--data', metavar='DIR',
                     help='path to dataset', default='~/data/ImageNet', type=str)
 parser.add_argument('--data_path', metavar='DIR',
                     help='path to dataset', default='/datasets/ImageNet0_03125', type=str)
-
+# parser.add_argument('--dataset',
+#                     help='choose datasets ', default='cifar10', type=str)
 parser.add_argument('--dataset',
-                    help='choose datasets ', default='cifar10', type=str)
+                    help='choose datasets ', default='fashionmnist', type=str)
 parser.add_argument('--save_path',
                     help='path to log', default='./save', type=str)
 parser.add_argument('--random_seed', '-rd', default=random.randint(0, 2022), type=int,
@@ -121,3 +122,25 @@ parser.add_argument('--use_crossover',action='store_true',
 #
 # parser.add_argument('--interpolation', default="bilinear", type=str,
 #                     help='crossover rate for CCEA')
+
+
+#main2nn2 faishon
+parser.add_argument('-T', default=4, type=int, help='simulating time-steps')
+parser.add_argument('-device', default='cuda:0', help='device')
+parser.add_argument('-epochs', default=64, type=int, metavar='N',
+                    help='number of total epochs to run')
+
+parser.add_argument('-data-dir', type=str, help='root dir of Fashion-MNIST dataset',default='/datasets/FashionMNIST/')
+parser.add_argument('-b', default=128, type=int, help='batch size')
+parser.add_argument('-j', default=4, type=int, metavar='N',
+                    help='number of data loading workers (default: 4)')
+parser.add_argument('-out-dir', type=str, default='./logs', help='root dir for saving logs and checkpoint')
+parser.add_argument('-resume', type=str, help='resume from the checkpoint path')
+parser.add_argument('-amp', action='store_true', help='automatic mixed precision training')
+parser.add_argument('-cupy', action='store_true', help='use cupy backend')
+parser.add_argument('-opt', type=str, help='use which optimizer. SDG or Adam')
+parser.add_argument('-momentum', default=0.9, type=float, help='momentum for SGD')
+parser.add_argument('-lr', default=0.1, type=float, help='learning rate')
+parser.add_argument('-channels', default=128, type=int, help='channels of CSNN')
+parser.add_argument('-save-es', default=None,
+                    help='dir for saving a batch spikes encoded by the first {Conv2d-BatchNorm2d-IFNode}')

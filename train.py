@@ -11,6 +11,9 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import arch.resnet_cifar10 as resnet
+import spikingjelly.activation_based.examples.conv_fashion_mnist as s
+from config import *
+from spikingjelly.activation_based import functional
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
@@ -170,22 +173,25 @@ def validate(test_loader, model, criterion, args, print_result = True):
 
     end = time.time()
 
+
+    #####todo
+    test_loss = 0
+    test_acc = 0
+    test_samples = 0
     with torch.no_grad():
-        for i, (inputs, labels) in enumerate(test_loader):
-            labels = labels.cuda()
-            inputs_var = inputs.cuda()
-            labels_var = labels.cuda()
+        for i,(img, label) in enumerate(test_loader):
+            img = img.to(args.device)
+            label = label.to(args.device)
+            label_onehot = s.F.one_hot(label, 10).float()
+            out_fr = model(img)
+            loss = s.F.mse_loss(out_fr, label_onehot)
 
-            output = model(inputs_var).float()
-            loss = criterion(output, labels_var).float()
-
-            prec1 = accuracy(output.data, labels)[0]
-            losses.update(loss.item(), inputs.size(0))
-            top1.update(prec1.item(), inputs.size(0))
-
+            #added
+            prec1 = accuracy(out_fr.data, label)[0]
+            losses.update(loss.item(), img.size(0))
+            top1.update(prec1.item(), img.size(0))
             batch_time.update(time.time() - end)
             end = time.time()
-
             if i % args.print_freq == 0 and print_result == True:
                 logger = logging.getLogger()
                 logger.info('Test [{0}/{1}]\t'
@@ -193,8 +199,45 @@ def validate(test_loader, model, criterion, args, print_result = True):
                         'Loss {loss.val:.4f}({loss.avg:.4f})\t'
                         'Prec@1 {top1.val:.3f}({top1.avg:.3f})'.format(i, len(test_loader), batch_time = batch_time, loss = losses, top1 = top1)
                             )
+
+            test_samples += label.numel()
+            test_loss += loss.item() * label.numel()
+            test_acc += (out_fr.argmax(1) == label).float().sum().item()
+            functional.reset_net(model)
         if print_result:
             logger.info('Valid error:'+str('%.3f' % top1.avg))
+    test_time = time.time()
+    test_loss /= test_samples
+    test_acc /= test_samples
+    print('test_acc', test_acc)
+    #####todo
+
+
+    # with torch.no_grad():
+    #     for i, (inputs, labels) in enumerate(test_loader):
+    #         labels = labels.cuda()
+    #         inputs_var = inputs.cuda()
+    #         labels_var = labels.cuda()
+    #
+    #         output = model(inputs_var).float()
+    #         loss = criterion(output, labels_var).float()
+    #
+    #         prec1 = accuracy(output.data, labels)[0]
+    #         losses.update(loss.item(), inputs.size(0))
+    #         top1.update(prec1.item(), inputs.size(0))
+    #
+    #         batch_time.update(time.time() - end)
+    #         end = time.time()
+    #
+    #         if i % args.print_freq == 0 and print_result == True:
+    #             logger = logging.getLogger()
+    #             logger.info('Test [{0}/{1}]\t'
+    #                     'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+    #                     'Loss {loss.val:.4f}({loss.avg:.4f})\t'
+    #                     'Prec@1 {top1.val:.3f}({top1.avg:.3f})'.format(i, len(test_loader), batch_time = batch_time, loss = losses, top1 = top1)
+    #                         )
+    #     if print_result:
+    #         logger.info('Valid error:'+str('%.3f' % top1.avg))
 
     # print(losses.avg) 
     return top1.avg

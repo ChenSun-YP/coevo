@@ -1,9 +1,9 @@
 from config import *
 import sys
-from spikingjelly.spikingjelly.activation_based.model import spiking_vgg
+from spikingjelly.activation_based.model import spiking_vgg
 
-from spikingjelly.spikingjelly.activation_based.layer import BatchNorm2d
-from spikingjelly.spikingjelly.activation_based import surrogate, neuron, functional
+from spikingjelly.activation_based.layer import BatchNorm2d
+from spikingjelly.activation_based import surrogate, neuron, functional
 
 cifar_model_names = sorted(name for name in cifar_models.__dict__
                            if name.islower() and not name.startswith("__")
@@ -26,7 +26,6 @@ def get_data(args):
     if args.dataset == 'ImageNet':
         traindir = os.path.join(args.data, 'train')
 
-        print(traindir,'?????')
         valdir = os.path.join(args.data, 'val')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
@@ -104,9 +103,11 @@ def get_model(args):
         if args.dataset == 'cifar10':
             # model = vggmodels.__dict__[args.arch](depth=16)
 
-            model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
-                                             surrogate_function=surrogate.ATan(), detach_reset=True,data_path =args.data_path)
-            print(type(model))
+            model = spiking_vgg.spiking_vgg16_bn(pretrained=True, spiking_neuron=neuron.IFNode, norm_layer=BatchNorm2d,
+                                                 surrogate_function=surrogate.ATan(), detach_reset=True)
+            # model = spiking_vgg._spiking_vgg('vgg16_bn', 'D', True, True, True, BatchNorm2d, neuron.IFNode,
+            #                                  surrogate_function=surrogate.ATan(), detach_reset=True,data_path =args.data_path)
+            # print(type(model))
             #
             # model_dict = torch.load(args.dict_path)['state_dict']
             # model.load_state_dict(model_dict)
@@ -114,7 +115,7 @@ def get_model(args):
             model =spiking_vgg.spiking_vgg11(pretrained=True, spiking_neuron=neuron.IFNode,
                                       surrogate_function=surrogate.ATan(), detach_reset=True)
     elif args.arch in cifar_model_names:
-        model = torch.nn.DataParallel(cifar_models.__dict__[args.arch]())
+        model = torch.nn.DataParallel(cifar_models.__dict__[args.arch]()) #FIX
         model.load_state_dict(torch.load(args.dict_path)['state_dict'])
     elif args.arch == 'vgg':
         if args.dataset == 'cifar10':

@@ -11,7 +11,7 @@ module load python/3.8
 virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 pip3 --version
-pip3 install --no-index torch==1.11.0 torchvision==0.9.1 torchtext torchaudio
+pip3 install --no-index torch==1.12.0 torchvision==0.9.1 torchtext torchaudio
 
 pip3 install thop
 pip3 install --no-index torchsummary
