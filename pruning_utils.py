@@ -748,7 +748,7 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
 
     else:
         # last conv layer
-        _, old_conv1 = list(model.features._modules.items())[conv_16_index[deleted_layer_index]]
+        _, old_conv1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index]]
         new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
@@ -764,7 +764,7 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
             new_conv1_bias = new_conv1.bias.data.cpu().numpy()
 
         # following bn
-        _, old_bn1 = list(model.features._modules.items())[conv_16_index[deleted_layer_index] + 1]
+        _, old_bn1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index] + 1]
         old_bn1_weight = [old_bn1.weight.data.cpu().numpy(), \
                           old_bn1.bias.data.cpu().numpy(), \
                           old_bn1.running_mean.data.cpu().numpy(), \
@@ -785,10 +785,10 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
             new_conv1.cuda()
             new_bn1.cuda()
 
-        model.features = torch.nn.Sequential(
-            *(replace_layers(model.features, i,
+        model.conv_fc = torch.nn.Sequential(
+            *(replace_layers(model.conv_fc, i,
                              [conv_16_index[deleted_layer_index], conv_16_index[deleted_layer_index] + 1], \
-                             [new_conv1, new_bn1]) for i, _ in enumerate(model.features)))
+                             [new_conv1, new_bn1]) for i, _ in enumerate(model.conv_fc)))
 
         # first linear layer
         old_conv_filter_num = old_conv1.out_channels
