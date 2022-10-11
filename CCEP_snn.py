@@ -383,6 +383,9 @@ class CCEPSNN:
                 torch.save(self.model, save_path)
             self.model = copy.deepcopy(pruned_model)
         # self.check_model_profile()
+
+        out_dir = self.args.out_dir
+        writer = SummaryWriter(out_dir)
         logger.info("Test set:")
         validate(self.test_loader, self.model, self.criterion, self.args)
         for i in range(run_epoch):
@@ -451,8 +454,8 @@ class CCEPSNN:
             # else:
             #     optimizer = torch.optim.SGD(cur_model.parameters(), 0.01, momentum=self.args.momentum,
             #                                 weight_decay=self.args.weight_decay)
-            lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.args.lr_milestone,
-                                                                    last_epoch=-1)
+            # lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.args.lr_milestone,
+            #                                                         last_epoch=-1)
             # self.model = fine_tune_method.basic_finetune(cur_model, self.args.ft_epoch, self.train_loader, self.test_loader, self.criterion, optimizer, self.args,
             #                                 lr_scheduler)
             flops, params = self.check_model_profile()
@@ -467,6 +470,8 @@ class CCEPSNN:
             validate(self.valid_loader, self.model, self.criterion, self.args)
             save_path = f'{self.args.save_path}/{self.args.arch}_{self.args.dataset}_af{i}.pth'
             torch.save(self.model.state_dict(), save_path)
+            writer.add_scalar('filter_num', sum(self.FILTER_NUMS[i]), i+1)
+            writer.add_scalar('train_acc', self.acc[i], i+1)
             logger.info(f'ACC:{self.acc}')
             logger.info(f'FLOPS:{self.FLOPS}')
             logger.info(f'Params:{self.parms}')
@@ -477,4 +482,5 @@ class CCEPSNN:
         logger.info(f'Params:{self.parms}')
         for i in range(len(self.FILTER_NUMS)):
             logger.info(f'FILTER_NUM at epoch {i+1}:{self.FILTER_NUMS[i]}')
+
         return self.best_model_list

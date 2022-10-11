@@ -170,7 +170,6 @@ def validate(test_loader, model, criterion, args, print_result = True):
     top1 = AverageMeter()
     logger = logging.getLogger()
     model.eval()
-
     end = time.time()
 
 
@@ -183,6 +182,7 @@ def validate(test_loader, model, criterion, args, print_result = True):
             img = img.to(args.device)
             label = label.to(args.device)
             label_onehot = s.F.one_hot(label, 10).float()
+
             out_fr = model(img)
             loss = s.F.mse_loss(out_fr, label_onehot)
 

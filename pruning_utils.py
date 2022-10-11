@@ -663,6 +663,185 @@ def prune_Resnet_imagenet_group(model, deleted_stage_index, deleted_block_index,
     return model
 
 
+# def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, use_cuda=True):
+#     def replace_layers(model, i, indexes, layers):
+#         if i in indexes:
+#             return layers[indexes.index(i)]
+#         return model[i]
+#
+#     conv_16_index = {0: 0, 1: 4}
+#     if deleted_layer_index != 1:
+#         # current conv
+#         _, old_conv1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index]]
+#
+#
+#         # new_conv1 = torch.nn.Conv2d(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+#         #                             kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
+#         #                             padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
+#         #                             bias=(old_conv1.bias is not None))
+#
+#         new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+#                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
+#                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
+#                                     bias=(old_conv1.bias is not None), step_mode="m")
+#
+#         old_conv1_weights = old_conv1.weight.data.cpu().numpy()
+#
+#         new_conv1_weights = new_conv1.weight.data.cpu().numpy()
+#
+#         new_conv1_weights[:, :, :, :] = old_conv1_weights[reserved_filter_group, :, :, :]
+#
+#         new_conv1.weight.data = torch.from_numpy(new_conv1_weights)
+#         # # conv bias
+#         # if bias == True:
+#         #     old_conv1_bias = old_conv1.bias.data.cpu().numpy()
+#         #     new_conv1_bias = new_conv1.bias.data.cpu().numpy()
+#         #     new_conv1_bias = old_conv1_weights[reserved_filter_group]
+#         #     new_conv1.bias.data = torch.from_numpy(new_conv1_bias)
+#         # following bn
+#         _, old_bn1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index] + 1]
+#         old_bn1_weight = [old_bn1.weight.data.cpu().numpy(), \
+#                           old_bn1.bias.data.cpu().numpy(), \
+#                           old_bn1.running_mean.data.cpu().numpy(), \
+#                           old_bn1.running_var.data.cpu().numpy()]
+#         new_bn1 = BatchNorm2dsnn(len(reserved_filter_group))
+#         new_bn1_weight = [new_bn1.weight.data.cpu().numpy(), \
+#                           new_bn1.bias.data.cpu().numpy(), \
+#                           new_bn1.running_mean.data.cpu().numpy(), \
+#                           new_bn1.running_var.data.cpu().numpy()]
+#         for i in range(len(new_bn1_weight)):
+#             new_bn1_weight[i] = old_bn1_weight[i][reserved_filter_group]
+#         new_bn1.weight.data = torch.from_numpy(new_bn1_weight[0])
+#         new_bn1.bias.data = torch.from_numpy(new_bn1_weight[1])
+#         new_bn1.running_mean.data = torch.from_numpy(new_bn1_weight[2])
+#         new_bn1.running_var.data = torch.from_numpy(new_bn1_weight[3])
+#
+#         # next_conv
+#         _, old_conv2 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index + 1]]
+#         new_conv2 = Conv2dsnn(in_channels=len(reserved_filter_group), out_channels=old_conv2.out_channels,
+#                                     kernel_size=old_conv2.kernel_size, stride=old_conv2.stride,
+#                                     padding=old_conv2.padding, dilation=old_conv2.dilation, groups=old_conv2.groups,
+#                                     bias=(old_conv2.bias is not None), step_mode="m")
+#         old_conv2_weights = old_conv2.weight.data.cpu().numpy()
+#         new_conv2_weights = new_conv2.weight.data.cpu().numpy()
+#         new_conv2_weights[:, :, :, :] = old_conv2_weights[:, reserved_filter_group, :, :]
+#         new_conv2.weight.data = torch.from_numpy(new_conv2_weights)
+#         if bias == True:
+#             new_conv2.bias.data = old_conv2.bias.data
+#
+#         if use_cuda:
+#             new_conv1.cuda()
+#             new_bn1.cuda()
+#             new_conv2.cuda()
+#
+#         features = torch.nn.Sequential(
+#             *(replace_layers(model.conv_fc, i,
+#                              [conv_16_index[deleted_layer_index], conv_16_index[deleted_layer_index] + 1,
+#                               conv_16_index[deleted_layer_index + 1]], \
+#                              [new_conv1, new_bn1, new_conv2]) for i, _ in enumerate(model.conv_fc)))
+#
+#         del model.conv_fc
+#         model.conv_fc = features
+#         functional.set_step_mode(model,step_mode='m')
+#
+#         return model
+#
+#     else:
+#         # last conv layer
+#         _, old_conv1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index]]
+#         new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
+#                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
+#                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
+#                                     bias=(old_conv1.bias is not None))
+#         old_conv1_weights = old_conv1.weight.data.cpu().numpy()
+#         new_conv1_weights = new_conv1.weight.data.cpu().numpy()
+#         new_conv1_weights[:, :, :, :] = old_conv1_weights[reserved_filter_group, :, :, :]
+#         new_conv1.weight.data = torch.from_numpy(new_conv1_weights)
+#         if bias == True:
+#             new_conv1_bias = old_conv1_weights[reserved_filter_group]
+#             new_conv1.bias.data = torch.from_numpy(new_conv1_bias)
+#             old_conv1_bias = old_conv1.bias.data.cpu().numpy()
+#             new_conv1_bias = new_conv1.bias.data.cpu().numpy()
+#
+#         # following bn
+#         _, old_bn1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index] + 1]
+#         old_bn1_weight = [old_bn1.weight.data.cpu().numpy(), \
+#                           old_bn1.bias.data.cpu().numpy(), \
+#                           old_bn1.running_mean.data.cpu().numpy(), \
+#                           old_bn1.running_var.data.cpu().numpy()]
+#         new_bn1 = BatchNorm2dsnn(len(reserved_filter_group))
+#         new_bn1_weight = [new_bn1.weight.data.cpu().numpy(), \
+#                           new_bn1.bias.data.cpu().numpy(), \
+#                           new_bn1.running_mean.data.cpu().numpy(), \
+#                           new_bn1.running_var.data.cpu().numpy()]
+#         for i in range(len(new_bn1_weight)):
+#             new_bn1_weight[i] = old_bn1_weight[i][reserved_filter_group]
+#         new_bn1.weight.data = torch.from_numpy(new_bn1_weight[0])
+#         new_bn1.bias.data = torch.from_numpy(new_bn1_weight[1])
+#         new_bn1.running_mean.data = torch.from_numpy(new_bn1_weight[2])
+#         new_bn1.running_var.data = torch.from_numpy(new_bn1_weight[3])
+#
+#         if use_cuda:
+#             new_conv1.cuda()
+#             new_bn1.cuda()
+#
+#         model.conv_fc = torch.nn.Sequential(
+#             *(replace_layers(model.conv_fc, i,
+#                              [conv_16_index[deleted_layer_index], conv_16_index[deleted_layer_index] + 1], \
+#                              [new_conv1, new_bn1]) for i, _ in enumerate(model.conv_fc)))
+#
+#         # first linear layer
+#         old_conv_filter_num = old_conv1.out_channels
+#         layer_index = 0
+#         old_linear_layer = None
+#         for _, module in model.conv_fc._modules.items():
+#             if isinstance(module, Linearsnn):
+#                 old_linear_layer = module
+#                 break
+#             layer_index = layer_index + 1
+#
+#         if old_linear_layer is None:
+#             raise BaseException("No linear layer found in classifier")
+#
+#         params_per_input_channel = old_linear_layer.in_features // old_conv1.out_channels
+#         # print(params_per_input_channel)
+#         # print(old_conv_filter_num, len(reserved_filter_group))
+#         new_linear_layer = \
+#             Linearsnn(old_linear_layer.in_features - params_per_input_channel * (
+#                         old_conv_filter_num - len(reserved_filter_group)),
+#                             old_linear_layer.out_features)
+#
+#         old_weights = old_linear_layer.weight.data.cpu().numpy()
+#         new_weights = new_linear_layer.weight.data.cpu().numpy()
+#         # print(new_conv_filter_num)
+#         # print(params_per_input_channel)
+#
+#         reserved_filter_group.sort(key=lambda a: a)
+#         # print(reserved_filter_group)
+#
+#         for i in range(len(reserved_filter_group)):
+#             # print(i, reserved_filter_group[i])
+#             new_weights[:, i * params_per_input_channel:(i + 1) * params_per_input_channel] = \
+#                 old_weights[:, reserved_filter_group[i] * params_per_input_channel:(reserved_filter_group[
+#                                                                                         i] + 1) * params_per_input_channel]
+#             # print(i)
+#
+#         # new_linear_layer.bias.data = old_linear_layer.bias.data
+#
+#         new_linear_layer.weight.data = torch.from_numpy(new_weights)
+#         if use_cuda:
+#             new_linear_layer.weight.data = new_linear_layer.weight.data.cuda()
+#
+#         conv_fc = torch.nn.Sequential(
+#             *(replace_layers(model.conv_fc, i, [layer_index], \
+#                              [new_linear_layer]) for i, _ in enumerate(model.conv_fc)))
+#         model.conv_fc = conv_fc #fixme all classifer
+#         # classifier = torch.nn.Sequential(
+#         #     *(replace_layers(model.classifier, i, [layer_index], \
+#         #                      [new_linear_layer]) for i, _ in enumerate(model.classifier)))
+#         # model.classifier = classifier #origninal code
+#         functional.set_step_mode(model,step_mode='m')
+#         return model
 def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, use_cuda=True):
     def replace_layers(model, i, indexes, layers):
         if i in indexes:
@@ -683,7 +862,7 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
         new_conv1 = Conv2dsnn(in_channels=old_conv1.in_channels, out_channels=len(reserved_filter_group),
                                     kernel_size=old_conv1.kernel_size, stride=old_conv1.stride,
                                     padding=old_conv1.padding, dilation=old_conv1.dilation, groups=old_conv1.groups,
-                                    bias=(old_conv1.bias is not None), step_mode="s")
+                                    bias=(old_conv1.bias is not None), step_mode="m")
 
         old_conv1_weights = old_conv1.weight.data.cpu().numpy()
 
@@ -692,12 +871,12 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
         new_conv1_weights[:, :, :, :] = old_conv1_weights[reserved_filter_group, :, :, :]
 
         new_conv1.weight.data = torch.from_numpy(new_conv1_weights)
-        # conv bias
-        if bias == True:
-            old_conv1_bias = old_conv1.bias.data.cpu().numpy()
-            new_conv1_bias = new_conv1.bias.data.cpu().numpy()
-            new_conv1_bias = old_conv1_weights[reserved_filter_group]
-            new_conv1.bias.data = torch.from_numpy(new_conv1_bias)
+        # # conv bias
+        # if bias == True:
+        #     old_conv1_bias = old_conv1.bias.data.cpu().numpy()
+        #     new_conv1_bias = new_conv1.bias.data.cpu().numpy()
+        #     new_conv1_bias = old_conv1_weights[reserved_filter_group]
+        #     new_conv1.bias.data = torch.from_numpy(new_conv1_bias)
         # following bn
         _, old_bn1 = list(model.conv_fc._modules.items())[conv_16_index[deleted_layer_index] + 1]
         old_bn1_weight = [old_bn1.weight.data.cpu().numpy(), \
@@ -721,7 +900,7 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
         new_conv2 = Conv2dsnn(in_channels=len(reserved_filter_group), out_channels=old_conv2.out_channels,
                                     kernel_size=old_conv2.kernel_size, stride=old_conv2.stride,
                                     padding=old_conv2.padding, dilation=old_conv2.dilation, groups=old_conv2.groups,
-                                    bias=(old_conv2.bias is not None))
+                                    bias=(old_conv2.bias is not None), step_mode="m")
         old_conv2_weights = old_conv2.weight.data.cpu().numpy()
         new_conv2_weights = new_conv2.weight.data.cpu().numpy()
         new_conv2_weights[:, :, :, :] = old_conv2_weights[:, reserved_filter_group, :, :]
@@ -794,7 +973,7 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
         old_conv_filter_num = old_conv1.out_channels
         layer_index = 0
         old_linear_layer = None
-        for _, module in model.classifier._modules.items():
+        for _, module in model.conv_fc._modules.items():
             if isinstance(module, Linearsnn):
                 old_linear_layer = module
                 break
@@ -809,7 +988,8 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
         new_linear_layer = \
             Linearsnn(old_linear_layer.in_features - params_per_input_channel * (
                         old_conv_filter_num - len(reserved_filter_group)),
-                            old_linear_layer.out_features)
+                            old_linear_layer.out_features,bias=False)
+        # old_weights2 =old_linear_layer.weight.data
 
         old_weights = old_linear_layer.weight.data.cpu().numpy()
         new_weights = new_linear_layer.weight.data.cpu().numpy()
@@ -826,15 +1006,20 @@ def prune_csnn(model, deleted_layer_index, reserved_filter_group, bias=False, us
                                                                                         i] + 1) * params_per_input_channel]
             # print(i)
 
-        new_linear_layer.bias.data = old_linear_layer.bias.data
+        # new_linear_layer.bias.data = old_linear_layer.bias.data
 
         new_linear_layer.weight.data = torch.from_numpy(new_weights)
         if use_cuda:
             new_linear_layer.weight.data = new_linear_layer.weight.data.cuda()
 
-        classifier = torch.nn.Sequential(
-            *(replace_layers(model.classifier, i, [layer_index], \
-                             [new_linear_layer]) for i, _ in enumerate(model.classifier)))
-        model.classifier = classifier
+        conv_fc = torch.nn.Sequential(
+            *(replace_layers(model.conv_fc, i, [layer_index], \
+                             [new_linear_layer]) for i, _ in enumerate(model.conv_fc)))
+        model.conv_fc = conv_fc #fixme all classifer
+        # classifier = torch.nn.Sequential(
+        #     *(replace_layers(model.classifier, i, [layer_index], \
+        #                      [new_linear_layer]) for i, _ in enumerate(model.classifier)))
+        # model.classifier = classifier #origninal code
         functional.set_step_mode(model,step_mode='m')
         return model
+
