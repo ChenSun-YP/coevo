@@ -240,7 +240,8 @@ def validate(test_loader, model, criterion, args, print_result = True):
     #         logger.info('Valid error:'+str('%.3f' % top1.avg))
 
     # print(losses.avg) 
-    return top1.avg
+    # return top1.avg todo changed
+    return test_acc
 
 
 def train(train_loader, model, criterion, optimizer, epoch):

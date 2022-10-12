@@ -204,7 +204,7 @@ class CCEPSNN:
                 temp_list.append(parent_fitness[j])
             for j in range(len(child_fitness)):
                 temp_list.append(child_fitness[j])
-            temp_list.sort(key = lambda x:(x[1], -x[3]), reverse=True)
+            temp_list.sort(key = lambda x:(x[1], -x[3]), reverse=True) #first by accuracy, then by filternum
             logger.info(f'Population at epoch {i}:')
             for j in range(self.pop_size):
                 pop[j] = temp_list[j][2]
@@ -393,15 +393,12 @@ class CCEPSNN:
             logger.info(f'Outer Epoch: {i}')
             index = 0
             for layer in range(len(BLOCK_NUM)): # 13 blocks
-                print(layer)
                 if self.args.arch == 'vgg': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
-                    print('vgg')
                 elif self.args.arch == 'spiking_vgg': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
-                    print('vgg')
                 elif self.args.arch == 'csnn': # vgg   13 blocks           0 1 2 3 4 5 6 7 8 9 10 11 12
                     sol[index] = self.evoluiton_step(FILTER_NUM[index], layers[layer])
                     index += 1
@@ -472,6 +469,7 @@ class CCEPSNN:
             torch.save(self.model.state_dict(), save_path)
             writer.add_scalar('filter_num', sum(self.FILTER_NUMS[i]), i+1)
             writer.add_scalar('train_acc', self.acc[i], i+1)
+            writer.add_scalar('avg_acc',sum(self.acc)/len(self.acc),i+1)
             logger.info(f'ACC:{self.acc}')
             logger.info(f'FLOPS:{self.FLOPS}')
             logger.info(f'Params:{self.parms}')
