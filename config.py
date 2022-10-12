@@ -81,10 +81,10 @@ parser.add_argument('--save_path',
                     help='path to log', default='./save', type=str)
 parser.add_argument('--random_seed', '-rd', default=random.randint(0, 2022), type=int,
                     help='seed for dataset split')
-parser.add_argument('--run_epoch', '-rp', default=10, type=int,
+parser.add_argument('--run_epoch', '-rp', default=30, type=int,
                     help='Outer Running epoch')
-parser.add_argument('--evolution_epoch', '-ep', default=2, type=int,
-                    help='Evolution epoch') #10
+parser.add_argument('--evolution_epoch', '-ep', default=5, type=int,
+                    help='Evolution epoch')
 parser.add_argument('--ft_epoch', '-fp', default=60, type=int,
                     help='Fine-tune epoch')
 parser.add_argument('--filter_num', type=int, nargs='+',
@@ -103,8 +103,8 @@ parser.add_argument('--pop_init_rate', default=0.8, type=float,
                     help='init pruning rate when init population')
 parser.add_argument('--prune_limitation', default=0.75, type=float,
                     help='prune limitation rate')
-parser.add_argument('--pop_size', default=2, type=int,
-                    help='population size for CCEA')#5
+parser.add_argument('--pop_size', default=5, type=int,
+                    help='population size for CCEA')
 parser.add_argument('--valid_ratio', default=0.99, type=float,
                     help='population size for CCEA')
 

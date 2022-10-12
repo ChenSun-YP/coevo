@@ -178,13 +178,13 @@ def validate(test_loader, model, criterion, args, print_result = True):
     test_acc = 0
     test_samples = 0
     with torch.no_grad():
-        for i,(img, label) in enumerate(test_loader):
+        for i,(img, label) in enumerate(test_loader): #for all image
             img = img.to(args.device)
             label = label.to(args.device)
             label_onehot = s.F.one_hot(label, 10).float()
 
-            out_fr = model(img)
-            loss = s.F.mse_loss(out_fr, label_onehot)
+            out_fr = model(img) #output for current img
+            loss = s.F.mse_loss(out_fr, label_onehot) #current img's loss
 
             #added
             prec1 = accuracy(out_fr.data, label)[0]
