@@ -22,7 +22,7 @@ python setup.py install
 cd ..
 nvidia-smi                        # you can use 'nvidia-smi' for a test
 # ResNet56 on CIFAR-10
-python main_snn_2.py -T 4 -device cuda:0 -b 128 -epochs 64 -data-dir /datasets/FashionMNIST/ -amp -cupy -opt sgd -lr 0.1 -j 8 -b 20
+python main_snn_2.py -T 4 -device cuda:0 -b 128 -epochs 64 -data-dir /datasets/FashionMNIST/ -amp -cupy -opt sgd -lr 0.1 -j 8 -b 20 -out-dir ./logs/testsnn/
 
 # python  main_snn.py --dataset ImageNet --arch vgg  \
 #                  --ft_epoch 100 --lr_milestone 50   --data ./data/ImageNet  \
