@@ -1,6 +1,14 @@
-on 
 
 This repo apply the coevo pruning method mentioned in the paper *Wu, Jia-Liang, et al. "Robust Neural Network Pruning by Cooperative Coevolution." International Conference on Parallel Problem Solving from Nature. Springer, Cham, 2022.* onto Deep Spiking Neural networks.
+
+
+
+
+
+
+
+
+
 
 ```<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate ```
 python main_snn_2.py -T 4 -device cuda:0 -b 128 -epochs 64 -data-dir /datasets/FashionMNIST/ -amp -cupy -opt sgd -lr 0.1 -j 8 -b 20
