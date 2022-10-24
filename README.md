@@ -16,11 +16,7 @@ python main_snn_2.py -T 4 -device cuda:0 -b 128 -epochs 64 -data-dir /datasets/F
 cd /Applications/Python\ 3.9/
 ./Install\ Certificates.command
 ```
-**This package includes the Python code of the paper 'Neural Network Pruning by Cooperative Coevolution'.** 
 
-ATTN: This package is free for academic usage. You can run it at your own risk. For other purposes, please contact Dr. Chao Qian (qianc@lamda.nju.edu.cn).
-
-ATTN2: ATTN2: This package was developed by Mr. Haopu Shang (shanghp@lamda.nju.edu.cn) and Mr. Jia-Liang Wu (wujl@lamda.nju.edu.cn). For any problem concerning the code, please feel free to contact Mr. Shang or Mr. Wu.
 
 ### Requirements
 
