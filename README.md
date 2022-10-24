@@ -5,7 +5,7 @@ This repo apply the coevo pruning method mentioned in the paper *Wu, Jia-Liang, 
 
 
 
-
+![prune plot 1 ](https://github.com/ChenSun-YP/coevo/blob/main/plot.jpg.png)
 
 
 
